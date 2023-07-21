@@ -1,0 +1,223 @@
+#project-view {
+  padding: 64px 32px 0 32px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#project-view .header {
+  margin-bottom: 32px;
+  position: relative;
+
+  &::after {
+    content: "";
+    height: 1px;
+    width: 100%;
+    bottom: -16px;
+    background-color: rgba(0, 0, 0, 0.1);
+    position: absolute;
+  }
+}
+
+#project-view #body {
+  height: 80%;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 150px;
+  grid-gap: 32px;
+}
+
+.task-button {
+  background-color: #fff;
+  padding: 16px;
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  transition: all 0.2s ease-in-out;
+}
+
+.task-button:hover {
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+}
+
+.task-button .title {
+  display: flex;
+  /* display: grid; */
+  grid-template-columns: 48px 1fr;
+  grid-template-rows: 25px 23px;
+  align-items: center;
+  margin-bottom: 8px;
+  /* column-gap: 8px; */
+  gap: 16px;
+}
+
+.task-button .heading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.task-button .title h3 {
+  font-size: 22px;
+  /* align-self: self-end; */
+  font-weight: 500;
+}
+
+.task-button .title .progress {
+  grid-area: 1/1/3/2;
+  height: 42px;
+  width: 42px;
+  align-self: center;
+  justify-self: center;
+  aspect-ratio: 1;
+}
+
+.task-button .date {
+  font-size: 12px;
+  align-self: self-start;
+  /* margin: 8px; */
+  /* margin-left: 40px; */
+}
+
+#empty-message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  opacity: 50%;
+}
+
+#add-task {
+  border-radius: 16px;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  font-size: 22px;
+  right: 32px;
+  bottom: 32px;
+  background-color: #1469c4;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#add-task:hover {
+  box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05) rotate(180deg);
+}
+
+input#date-input {
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.form-item textarea {
+  height: 60px;
+  /* border-radius: 8px; */
+  font-size: 14px;
+  padding: 4px 18px;
+  border-radius: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+}
+
+.form-item textarea::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+  /* overflow: auto; */
+}
+
+.form-item textarea::-webkit-scrollbar-thumb {
+  width: 12px;
+  background-color: #1469c4;
+  border-radius: 6px;
+  border-right: 1px solid white;
+  cursor: pointer;
+  /* overflow: auto; */
+}
+
+.form-item.buttons {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+/* input:invalid#date-input {
+  background-color: #a00;
+  font-family: inherit;
+} */
+
+.form-item {
+  position: relative;
+}
+
+#black .form-item input[type="range"] {
+  padding: 0;
+  /* margin: 0; */
+  display: block;
+  width: 100%;
+  -webkit-appearance: none;
+  padding: 2px;
+  --thumb-color: #00ff00;
+  /* --left: 2px; */
+  --content: "";
+  position: relative;
+  margin-bottom: 32px;
+}
+
+#black .form-item input[type="range"] + span {
+  --left: 2px;
+  background-color: black;
+  width: 24px;
+  padding: 2px;
+  height: 24px;
+  aspect-ratio: 1/1;
+  left: var(--left);
+  bottom: -28px;
+  position: absolute;
+  background-color: #1469c4;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  font-size: 12px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: all 0.1s ease-out;
+}
+#black .form-item input[type="range"]:hover + span {
+  opacity: 1;
+}
+
+#black .form-item input[type="range"]::-webkit-slider-thumb {
+  padding: 0;
+  /* margin: 0; */
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: var(--thumb-color);
+  /* display: block; */
+  /* width: 100%; */
+  -webkit-appearance: none;
+  position: relative;
+  &:hover::after {
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    left: var(--left);
+    position: absolute;
+    /* content: var(--content); */
+  }
+}
+
+#black .form-item input[type="range"]::-webkit-slider-thumb {
+}
+
+/* .form-item input[type="range"]; */

@@ -170,7 +170,7 @@ input#date-input {
 }
 
 #black .form-item input[type="range"] + span {
-  --left: 2px;
+  --left: 50%;
   background-color: black;
   width: 24px;
   padding: 2px;

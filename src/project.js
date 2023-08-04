@@ -11,7 +11,8 @@ Project.prototype.sub = function (func) {
 };
 
 Project.prototype.fire = function () {
-  this.changeSubs.forEach((func) => func());
+  console.log(this.changeSubs);
+  this.changeSubs.forEach((func) => func && func());
   fire(EVENT_PROJECTS_UPDATE);
 };
 

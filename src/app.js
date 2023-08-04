@@ -9,7 +9,7 @@ import projectView from "./projectView";
 import { addProject } from "./projectManager";
 
 const project = new Project("My first project", []);
-addProject(project);
+// addProject(project);
 console.log(project);
 const task = new Task(
   "title 1",
@@ -65,6 +65,7 @@ function app() {
   //   )
   // );
   div.appendChild(sidebar());
+  console.log("Appended sidebar");
 
   div.appendChild(content);
   // div.appendChild(newTask());

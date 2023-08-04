@@ -1,5 +1,6 @@
 import newTask from "./newTask";
 import progressMeter from "./progressMeter";
+import { removeTaskSubs } from "./projectManager";
 import "./projectView.css";
 import taskView from "./taskView";
 
@@ -19,7 +20,6 @@ function plus(body, project) {
   // div.addEventListener()
   div.addEventListener("click", () => {
     document.body.appendChild(newTask(project));
-    console.log("Added");
   });
   //   const plus = document.createElement("div");
   //   plus.textContent = "+";
@@ -46,6 +46,7 @@ function taskButton(task) {
   const date = document.createElement("div");
   date.classList.add("date");
 
+  task.date = new Date(task.date);
   date.textContent = `Due on ${task.date.toDateString()}`;
   heading.appendChild(date);
   title.appendChild(heading);
@@ -60,6 +61,7 @@ function taskButton(task) {
   div.addEventListener("click", () => {
     const mainContent = document.querySelector("#main-content");
     mainContent.innerHTML = "";
+    removeTaskSubs();
     mainContent.appendChild(taskView(task));
   });
 
@@ -88,16 +90,19 @@ function body(project) {
 export default function projectView(project) {
   const div = document.createElement("div");
   div.id = "project-view";
-  console.log(project);
   div.appendChild(header(project.title));
   const projectBody = body(project);
   div.appendChild(projectBody);
-  project.sub(() => {
+  const func = () => {
     div.innerHTML = "";
     div.appendChild(header(project.title));
     const projectBody = body(project);
     div.appendChild(projectBody);
-  });
+  };
+  if (!project.changeSubs.includes(func)) {
+    project.changeSubs = []; //VERY BAD FIX!
+    project.sub(func);
+  }
 
   return div;
 }

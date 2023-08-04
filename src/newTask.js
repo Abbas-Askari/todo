@@ -55,6 +55,7 @@ function priorityControl() {
   const input = document.createElement("input");
   label.textContent = "Priority";
   input.name = "priority";
+  input.value = 5.5;
   input.type = "range";
   input.min = 1;
   input.step = 0.1;
@@ -63,9 +64,9 @@ function priorityControl() {
   input.addEventListener("input", () => {
     input.style.setProperty(
       "--thumb-color",
-      `rgb(${255 * (1 - parseInt(input.value) / parseInt(input.max))}, ${
+      `rgb(0, ${255 * (1 - parseInt(input.value) / parseInt(input.max))}, ${
         (255 * parseInt(input.value)) / parseInt(input.max)
-      }, 0)`
+      })`
     );
     value.style.setProperty(
       "--left",

@@ -1,6 +1,6 @@
 import progressMeter from "./progressMeter";
 import { makeSvg } from "./newProject";
-import { mdiPlus } from "@mdi/js";
+import { mdiClose, mdiPlus } from "@mdi/js";
 
 // let subscribtions = [];
 
@@ -11,19 +11,12 @@ const getUpdatedTaskCheckLists = () => {
     const checkList = Array.from(list.querySelectorAll(".item")).reduce(
       (obj, item) => {
         obj[item.lastChild.value] = item.firstChild.checked;
-        console.log(
-          "item",
-          item,
-          item.lastChild.value,
-          item.firstChild.checked
-        );
         return obj;
       },
       {}
     );
     checkLists.push(checkList);
   }, {});
-  console.log("Final checklists", checkLists);
   return checkLists;
 };
 
@@ -39,8 +32,21 @@ const getCheckList = (checkList, task) => {
   h3.textContent = "Check List";
   header.appendChild(h3);
   const deleteBtn = document.createElement("div");
-  deleteBtn.textContent = "Delete";
-  h3.appendChild(deleteBtn);
+  deleteBtn.classList.add("delete");
+  const svg = makeSvg(mdiClose);
+  svg.style.cssText = `
+    width: 14px;
+    height: 14px;
+  `;
+  svg.setAttribute("viewBox", "5 5 15 15");
+  deleteBtn.appendChild(svg);
+  deleteBtn.addEventListener("click", () => {
+    task.checkLists.splice(task.checkLists.indexOf(checkList), 1);
+    task.fire();
+  });
+  // const svg = document.createElement("div");
+  // deleteBtn.textContent = "Delete";
+  header.appendChild(deleteBtn);
 
   const plus = document.createElement("div");
   plus.classList.add("plus");
@@ -49,6 +55,7 @@ const getCheckList = (checkList, task) => {
     const label = document.createElement("input");
     label.addEventListener("click", () => {
       task.checkLists = getUpdatedTaskCheckLists();
+      task.calcPercent();
       task.fire();
     });
     label.placeholder = "Name this check item!";
@@ -59,6 +66,7 @@ const getCheckList = (checkList, task) => {
     checkBox.setAttribute("name", "Click to Change!");
     checkBox.addEventListener("input", () => {
       task.checkLists = getUpdatedTaskCheckLists();
+      task.calcPercent();
       task.fire();
     });
     const item = document.createElement("div");
@@ -77,6 +85,7 @@ const getCheckList = (checkList, task) => {
       const label = document.createElement("input");
       label.addEventListener("input", () => {
         task.checkLists = getUpdatedTaskCheckLists();
+        task.calcPercent();
         task.fire();
       });
       label.value = key;
@@ -87,6 +96,7 @@ const getCheckList = (checkList, task) => {
       checkBox.setAttribute("name", key);
       checkBox.addEventListener("input", () => {
         task.checkLists = getUpdatedTaskCheckLists();
+        task.calcPercent();
         task.fire();
       });
       total++;
@@ -136,9 +146,7 @@ const getComparision = (date) => {
   const months = days / 30;
   const years = days / 365;
   const time = { years, months, weeks, days, hours, minute, millis };
-  console.log(time);
   const key = Object.keys(time).reduce((prev, current) => {
-    console.log(time[current]);
     if (prev) return prev;
     else if (time[current] > 1) return current;
     else return null;
@@ -195,7 +203,6 @@ const getProirity = (proirity) => {
       (slider.value / 9) * (slider.clientWidth - 36) + "px"
     );
     div.style.setProperty("--content", slider.value);
-    console.log(div.style.getPropertyValue("--left"));
   });
 
   const p = document.createElement("p");
@@ -210,8 +217,6 @@ const getProirity = (proirity) => {
 const getProgress = () => {
   const div = document.createElement("div");
   div.id = "progress";
-
-  // console.log(progressMeter("progress"));
 
   const meter = progressMeter("p");
   meter.setPercent(0.15);
@@ -274,6 +279,8 @@ const getTitle = (title) => {
 
   const meter = progressMeter("main-meter");
   // meter.setPercent(0.1);
+  meter.style["width"] = "38px";
+  meter.style["height"] = "38px";
   div.appendChild(meter);
 
   const h1 = document.createElement("h1");
@@ -294,27 +301,28 @@ function taskView(task) {
   // const [progress, setPercent] = getProgress();
   const updatePercent = () => {
     const percent = task.calcPercent();
-    console.log("Setting percent to: ", percent);
     setPercent(percent);
-    // console.log("Setting Percent");
   };
   task.sub(updatePercent);
   updatePercent();
-  console.log("task view is getting called");
-  // console.log({ progress, setPercent });
   const lists = document.createElement("div");
   lists.id = "lists";
+
+  const updateLists = () => {
+    lists.innerHTML = "";
+    task.checkLists.forEach((checkList, i) => {
+      const list = getCheckList(checkList, task);
+      list.setAttribute("data-index", i);
+      lists.appendChild(list);
+    });
+  };
+  task.sub(updateLists);
+  updateLists();
 
   div.appendChild(getDescription(task.description));
   // div.appendChild(getProirity(task.proirity));
   // div.appendChild(getDate(task.date));
   div.appendChild(lists);
-  task.checkLists.forEach((checkList, i) => {
-    const list = getCheckList(checkList, task);
-    list.setAttribute("data-index", i);
-    console.log(list);
-    lists.appendChild(list);
-  });
 
   div.appendChild(getCheckListAdder(task, div));
   return div;

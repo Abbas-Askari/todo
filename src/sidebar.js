@@ -1,6 +1,7 @@
 import {
   mdiAlertBox,
   mdiCalendarMonthOutline,
+  mdiClose,
   mdiPackageVariantClosed,
   mdiPlus,
   mdiStar,
@@ -8,10 +9,14 @@ import {
 import newProject from "./newProject";
 import {
   EVENT_PROJECTS_UPDATE,
+  fire,
   getProjects,
+  removeTaskSubs,
   subscribe,
 } from "./projectManager";
 import projectView from "./projectView";
+import progressMeter from "./progressMeter";
+import taskView from "./taskView";
 
 const makeSvg = (p, color = "currentColor") => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -39,6 +44,7 @@ const makeButton = (name, func, logo) => {
 
 function addProjectButtons(div) {
   const projects = getProjects();
+  console.log("Repopulating project buttons with: ", projects);
   // const buttonContents = projects.map((project, i) => ({
   //   text: project.title,
   //   func: () => {
@@ -48,36 +54,75 @@ function addProjectButtons(div) {
   //     //     previous ? previous : currnet.id === "content" ? currnet : null,
   //     //   null
   //     // );
-  //     console.log(mainContent);
   //     mainContent.innerHTML = "";
   //     mainContent.appendChild(projectView(project));
-  //     console.log("cleared");
   //   },
   //   logo: makeSvg(mdiPackageVariantClosed),
   // }));
+  const buttonContents = [];
 
   projects.forEach((project) => {
     const projectButtonContent = {
       text: project.title,
       func: () => {
         const mainContent = document.querySelector("#main-content");
-        //   ).reduce(
-        //   (previous, currnet) =>
-        //     previous ? previous : currnet.id === "content" ? currnet : null,
-        //   null
-        // );
-        console.log(mainContent);
         mainContent.innerHTML = "";
+        removeTaskSubs();
+
         mainContent.appendChild(projectView(project));
-        console.log("cleared");
       },
       logo: makeSvg(mdiPackageVariantClosed),
     };
+    buttonContents.push(projectButtonContent);
+    project.tasks.forEach((task) => {
+      const meter = progressMeter();
+      meter.setPercent(task.percent);
+      buttonContents.push({
+        text: task.title,
+        func: () => {
+          const mainContent = document.querySelector("#main-content");
+          mainContent.innerHTML = "";
+          removeTaskSubs();
+          mainContent.appendChild(taskView(task));
+        },
+        logo: meter,
+        isTask: true,
+      });
+    });
   });
 
   buttonContents.forEach((btn) => {
     const button = makeButton(btn.text, btn.func, btn.logo);
     button.classList.add("project-button");
+
+    const close = document.createElement("div");
+    close.classList.add("delete");
+    close.appendChild(makeSvg(mdiClose));
+    close.firstChild.setAttribute("viewBox", "5 5 15 15");
+
+    close.addEventListener("click", (e) => {
+      if (btn.isTask) {
+        projects.forEach((project) => {
+          project.tasks.forEach((t) => {
+            if (t.title === btn.text) {
+              project.tasks.splice(project.tasks.indexOf(t), 1);
+              project.fire();
+            }
+          });
+        });
+      } else {
+        const project = projects.reduce(
+          (acc, e) => (acc ? acc : e.title === btn.text ? e : null),
+          null
+        );
+        console.log("Project to delete: ", project);
+        getProjects().splice(projects.indexOf(project), 1);
+      }
+      fire(EVENT_PROJECTS_UPDATE);
+      e.stopPropagation();
+    });
+
+    button.appendChild(close);
     div.appendChild(button);
   });
 }
